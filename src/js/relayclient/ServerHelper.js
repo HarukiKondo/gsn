@@ -8,7 +8,7 @@ class ActiveRelayPinger {
 
     // TODO: 'httpSend' should be on a network layer
     constructor(filteredRelays, httpSend, gasPrice, verbose) {
-        this.remainingRelays = [...filteredRelays]
+        this.remainingRelays = filteredRelays.slice()
         this.httpSend = httpSend
         this.pingedRelays = 0
         this.relaysCount = filteredRelays.length
@@ -181,7 +181,7 @@ class ServerHelper {
      * @param {*} relayHubInstance
      */
     setHub(relayHubInstance) {
-        if (this.relayHubInstance !== relayHubInstance){
+        if (this.relayHubInstance._address !== relayHubInstance._address){
             this.filteredRelays = []
         }
         this.relayHubInstance = relayHubInstance
