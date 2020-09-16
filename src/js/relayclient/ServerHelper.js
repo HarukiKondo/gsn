@@ -239,13 +239,13 @@ class ServerHelper {
         }
 
         const origRelays = Object.values(activeRelays)
-        const filteredRelays = origRelays.filter(this.relayFilter).sort(this.compareRelayScores.bind(this));
+        const filteredRelays = origRelays.filter(this.relayFilter)
+                                         .sort(this.compareRelayScores.bind(this))
+                                         .slice(0, this.maxRelayToPing);
 
         if (filteredRelays.length == 0) {
             throw new Error("no valid relays. orig relays=" + JSON.stringify(origRelays))
         }
-
-        filteredRelays = filteredRelays.slice(0, this.maxRelayToPing);
 
         if (this.verbose){
             console.log("fetchRelaysAdded: after filtering have " + filteredRelays.length + " active relays")
