@@ -191,12 +191,12 @@ class ServerHelper {
         if (typeof this.relayHubInstance === 'undefined') {
             throw new Error("Must call to setHub first!")
         }
-        // Always fetch relays (issue when user click, reject signature and reclick)
-        //if (this.filteredRelays.length == 0 || this.fromBlock !== fromBlock)
-        //{
+
+        if (this.filteredRelays.length == 0 || this.fromBlock !== fromBlock)
+        {
             this.fromBlock = fromBlock
             await this.fetchRelaysAdded()
-        //}
+        }
         return this.createActiveRelayPinger(this.filteredRelays, this.httpSend, gasPrice, this.verbose)
     }
 
@@ -212,16 +212,11 @@ class ServerHelper {
         let activeRelays = {}
         let fromBlock = this.fromBlock || 2;
 
-        let addedAndRemovedEvents = []
-        let i = 0
-        do {
-            addedAndRemovedEvents = await this.relayHubInstance.getPastEvents("allEvents", { 
+        let addedAndRemovedEvents = await this.relayHubInstance.getPastEvents("allEvents", { 
                 fromBlock: fromBlock,
                 topics: [["0x85b3ae3aae9d3fcb31142fbd8c3b4722d57825b8edd6e1366e69204afa5a0dfa", // RelayAdded
                           "0x5490afc1d818789c8b3d5d63bce3d2a3327d0bba4efb5a7751f783dc977d7d11" // RelayRemoved
-                        ]]})
-            i++
-          } while (i < 10 && addedAndRemovedEvents.length > 0 && addedAndRemovedEvents[0].event === undefined);
+                        ]]});
 
         if (this.verbose){
             console.log("fetchRelaysAdded: found " + addedAndRemovedEvents.length + " events")
