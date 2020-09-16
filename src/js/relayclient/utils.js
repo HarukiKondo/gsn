@@ -54,8 +54,7 @@ module.exports = {
 
         let sig_
         try {
-
-
+            console.log("web3.eth.personal -- hash="+hash)
             sig_ = await new Promise((resolve, reject) => {
                 try {
                     web3.eth.personal.sign(hash, account, (err, res) => {
@@ -69,6 +68,8 @@ module.exports = {
 
         } catch (e) {
 
+            console.log("web3.eth.sign -- hash="+hash)
+            console.log(e)
             sig_ = await new Promise((resolve, reject) => {
                 web3.eth.sign(hash, account, (err, res) => {
                     if (err) reject(err)
