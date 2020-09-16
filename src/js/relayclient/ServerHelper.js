@@ -208,7 +208,7 @@ class ServerHelper {
         let activeRelays = {}
         let fromBlock = this.fromBlock || 2;
         let addedAndRemovedEvents = await this.relayHubInstance.getPastEvents("allEvents", { fromBlock: fromBlock,
-            // topics: [["RelayAdded", "RelayRemoved"]]
+            topics: [["RelayAdded", "RelayRemoved"]]
         })
 
         if (this.verbose){
