@@ -181,7 +181,8 @@ class ServerHelper {
      * @param {*} relayHubInstance
      */
     setHub(relayHubInstance) {
-        if (this.relayHubInstance._address !== relayHubInstance._address){
+        console.log(this.relayHubInstance)
+        if (this.relayHubInstance && this.relayHubInstance._address !== relayHubInstance._address){
             this.filteredRelays = []
         }
         this.relayHubInstance = relayHubInstance
