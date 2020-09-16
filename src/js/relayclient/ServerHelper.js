@@ -8,7 +8,7 @@ class ActiveRelayPinger {
 
     // TODO: 'httpSend' should be on a network layer
     constructor(filteredRelays, httpSend, gasPrice, verbose) {
-        this.remainingRelays = filteredRelays.slice()
+        this.remainingRelays = [...filteredRelays]
         this.httpSend = httpSend
         this.pingedRelays = 0
         this.relaysCount = filteredRelays.length
@@ -192,8 +192,7 @@ class ServerHelper {
             throw new Error("Must call to setHub first!")
         }
 
-        if (this.filteredRelays.length == 0 || this.fromBlock !== fromBlock)
-        {
+        if (this.filteredRelays.length == 0 || this.fromBlock !== fromBlock) {
             this.fromBlock = fromBlock
             await this.fetchRelaysAdded()
         }
