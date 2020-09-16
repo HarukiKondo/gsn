@@ -188,11 +188,12 @@ class ServerHelper {
         if (typeof this.relayHubInstance === 'undefined') {
             throw new Error("Must call to setHub first!")
         }
-        if (this.filteredRelays.length == 0 || this.fromBlock !== fromBlock)
-        {
+        // Always fetch relays (issue when user click, reject signature and reclick)
+        //if (this.filteredRelays.length == 0 || this.fromBlock !== fromBlock)
+        //{
             this.fromBlock = fromBlock
             await this.fetchRelaysAdded()
-        }
+        //}
         return this.createActiveRelayPinger(this.filteredRelays, this.httpSend, gasPrice, this.verbose)
     }
 
