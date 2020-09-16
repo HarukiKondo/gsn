@@ -66,17 +66,19 @@ module.exports = {
             })
 
         } catch (e) {
-            if(!e.message.includes("User denied message signature")) {
-                sig_ = await new Promise((resolve, reject) => {
+            
+            sig_ = await new Promise((resolve, reject) => {
+                console.log(e)
+                console.log()
+                if(!e.message.includes("User denied message signature")) {
                     web3.eth.sign(hash, account, (err, res) => {
                         if (err) reject(err)
                         else resolve(res)
                     })
-                })
-            } else {
-                reject(e)
-            }
-            
+                } else {
+                    reject(e)
+                }
+            })
         }
 
         let signature = ethUtils.fromRpcSig(sig_);
