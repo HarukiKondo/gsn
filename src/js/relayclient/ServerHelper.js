@@ -122,6 +122,7 @@ class ServerHelper {
                 relayFilter,        //function: return false to filter out a relay. default uses minStake, minDelay
                 addScoreRandomness,  //function: return Math.random (0..1), to fairly distribute among relays with same score.
                                      // (used by test to REMOVE the randomness, and make the test deterministic.
+                maxRelayToPing       // Number max of relay to ping (default 3)
             }) {
 
         this.httpSend = httpSend
@@ -132,6 +133,8 @@ class ServerHelper {
         this.addScoreRandomness = addScoreRandomness || Math.random
 
         this.calculateRelayScore = calculateRelayScore || this.defaultCalculateRelayScore.bind(this)
+
+        this.maxRelayToPing = maxRelayToPing || 3
 
         //default filter: either calculateRelayScore didn't set "score" field,
         // or if unstakeDelay is below min, or if stake is below min.
@@ -246,7 +249,7 @@ class ServerHelper {
             console.log("fetchRelaysAdded: after filtering have " + filteredRelays.length + " active relays")
         }
 
-        this.filteredRelays = filteredRelays;
+        this.filteredRelays = filteredRelays.slice(0, this.maxRelayToPing);
         this.isInitialized = true;
         return filteredRelays;
     }
