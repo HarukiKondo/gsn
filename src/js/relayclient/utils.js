@@ -66,7 +66,7 @@ module.exports = {
             })
 
         } catch (e) {
-            if(!e.includes("User denied message signature")) {
+            if(!e.message.includes("User denied message signature")) {
                 sig_ = await new Promise((resolve, reject) => {
                     web3.eth.sign(hash, account, (err, res) => {
                         if (err) reject(err)
