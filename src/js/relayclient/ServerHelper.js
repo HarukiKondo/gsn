@@ -245,12 +245,15 @@ class ServerHelper {
             throw new Error("no valid relays. orig relays=" + JSON.stringify(origRelays))
         }
 
+        filteredRelays = filteredRelays.slice(0, this.maxRelayToPing);
+
         if (this.verbose){
             console.log("fetchRelaysAdded: after filtering have " + filteredRelays.length + " active relays")
         }
-
-        this.filteredRelays = filteredRelays.slice(0, this.maxRelayToPing);
+        
+        this.filteredRelays = filteredRelays;
         this.isInitialized = true;
+
         return filteredRelays;
     }
 }
