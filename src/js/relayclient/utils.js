@@ -54,8 +54,6 @@ module.exports = {
 
         let sig_
         try {
-
-
             sig_ = await new Promise((resolve, reject) => {
                 try {
                     web3.eth.personal.sign(hash, account, (err, res) => {
@@ -68,12 +66,15 @@ module.exports = {
             })
 
         } catch (e) {
-
             sig_ = await new Promise((resolve, reject) => {
-                web3.eth.sign(hash, account, (err, res) => {
-                    if (err) reject(err)
-                    else resolve(res)
-                })
+                if(!e.message.includes("User denied message signature")) {
+                    web3.eth.sign(hash, account, (err, res) => {
+                        if (err) reject(err)
+                        else resolve(res)
+                    })
+                } else {
+                    reject(e)
+                }
             })
         }
 

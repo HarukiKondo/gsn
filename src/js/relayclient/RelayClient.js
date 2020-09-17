@@ -316,9 +316,9 @@ class RelayClient {
             network_gas_price = 1e9;
         }
 
-        let gasPrice = this.config.force_gasPrice ||  //forced gasprice
-            options.gas_price ||        //user-supplied gas price
-            Math.round((network_gas_price) * (pct + 100) / 100);
+        let gasPrice = Math.max(this.config.force_gasPrice || 0,       //forced gasprice
+            options.gas_price,                                    //user-supplied gas price
+            Math.round((network_gas_price) * (pct + 100) / 100)); //default gasPrice + n%
 
         //TODO: should add gas estimation for encodedFunctionCall (tricky, since its not a real transaction)
         let gasLimit = this.config.force_gasLimit || options.gas_limit;

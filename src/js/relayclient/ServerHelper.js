@@ -122,6 +122,7 @@ class ServerHelper {
                 relayFilter,        //function: return false to filter out a relay. default uses minStake, minDelay
                 addScoreRandomness,  //function: return Math.random (0..1), to fairly distribute among relays with same score.
                                      // (used by test to REMOVE the randomness, and make the test deterministic.
+                maxRelayToPing       // Number max of relay to ping (default 3)
             }) {
 
         this.httpSend = httpSend
@@ -132,6 +133,8 @@ class ServerHelper {
         this.addScoreRandomness = addScoreRandomness || Math.random
 
         this.calculateRelayScore = calculateRelayScore || this.defaultCalculateRelayScore.bind(this)
+
+        this.maxRelayToPing = maxRelayToPing || 3
 
         //default filter: either calculateRelayScore didn't set "score" field,
         // or if unstakeDelay is below min, or if stake is below min.
@@ -178,7 +181,7 @@ class ServerHelper {
      * @param {*} relayHubInstance
      */
     setHub(relayHubInstance) {
-        if (this.relayHubInstance !== relayHubInstance){
+        if (this.relayHubInstance && this.relayHubInstance._address !== relayHubInstance._address){
             this.filteredRelays = []
         }
         this.relayHubInstance = relayHubInstance
@@ -188,8 +191,8 @@ class ServerHelper {
         if (typeof this.relayHubInstance === 'undefined') {
             throw new Error("Must call to setHub first!")
         }
-        if (this.filteredRelays.length == 0 || this.fromBlock !== fromBlock)
-        {
+
+        if (this.filteredRelays.length == 0 || this.fromBlock !== fromBlock) {
             this.fromBlock = fromBlock
             await this.fetchRelaysAdded()
         }
@@ -207,9 +210,12 @@ class ServerHelper {
     async fetchRelaysAdded() {
         let activeRelays = {}
         let fromBlock = this.fromBlock || 2;
-        let addedAndRemovedEvents = await this.relayHubInstance.getPastEvents("allEvents", { fromBlock: fromBlock,
-            topics: [["RelayAdded", "RelayRemoved"]]
-        })
+
+        let addedAndRemovedEvents = await this.relayHubInstance.getPastEvents("allEvents", { 
+                fromBlock: fromBlock,
+                topics: [["0x85b3ae3aae9d3fcb31142fbd8c3b4722d57825b8edd6e1366e69204afa5a0dfa", // RelayAdded
+                          "0x5490afc1d818789c8b3d5d63bce3d2a3327d0bba4efb5a7751f783dc977d7d11" // RelayRemoved
+                        ]]});
 
         if (this.verbose){
             console.log("fetchRelaysAdded: found " + addedAndRemovedEvents.length + " events")
@@ -235,7 +241,9 @@ class ServerHelper {
         }
 
         const origRelays = Object.values(activeRelays)
-        const filteredRelays = origRelays.filter(this.relayFilter).sort(this.compareRelayScores.bind(this));
+        const filteredRelays = origRelays.filter(this.relayFilter)
+                                         .sort(this.compareRelayScores.bind(this))
+                                         .slice(0, this.maxRelayToPing);
 
         if (filteredRelays.length == 0) {
             throw new Error("no valid relays. orig relays=" + JSON.stringify(origRelays))
@@ -244,9 +252,10 @@ class ServerHelper {
         if (this.verbose){
             console.log("fetchRelaysAdded: after filtering have " + filteredRelays.length + " active relays")
         }
-
+        
         this.filteredRelays = filteredRelays;
         this.isInitialized = true;
+
         return filteredRelays;
     }
 }
