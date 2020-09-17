@@ -316,7 +316,7 @@ class RelayClient {
             network_gas_price = 1e9;
         }
 
-        let gasPrice = Math.max(this.config.force_gasPrice,       //forced gasprice
+        let gasPrice = Math.max(this.config.force_gasPrice || 0,       //forced gasprice
             options.gas_price,                                    //user-supplied gas price
             Math.round((network_gas_price) * (pct + 100) / 100)); //default gasPrice + n%
 
